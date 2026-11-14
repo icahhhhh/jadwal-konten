@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jadwal Konten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2EEFF;--surface:#FFFFFF;--ink:#1E1B3A;--muted:#6B6890;--line:#E1DBF7;
+  --pink:#FF4D8D;--yellow:#FFC82C;--teal:#12C4AE;--violet:#7B5CFF;--orange:#FF7A3D;--red:#E5243B;
+  --on-color:#1E1B3A;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17132E;--surface:#221D44;--ink:#F4F1FF;--muted:#A9A4D1;--line:#383067;}}
+:root[data-theme="dark"]{--bg:#17132E;--surface:#221D44;--ink:#F4F1FF;--muted:#A9A4D1;--line:#383067;}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 'DM Sans',system-ui,sans-serif;min-height:100vh}
+h1,h2,h3{font-family:'Bricolage Grotesque','DM Sans',sans-serif;margin:0}
+.wrap{max-width:1200px;margin:0 auto;padding:20px 16px 60px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+h1{font-size:clamp(34px,6vw,56px);font-weight:800;line-height:1;letter-spacing:-.02em}
+h1 span{display:inline-block;padding:0 .18em;border-radius:14px;color:#fff;margin-right:.12em}
+h1 .a{background:var(--pink);transform:rotate(-3deg)}
+h1 .b{background:var(--violet);transform:rotate(2deg)}
+.sub{color:var(--muted);margin:8px 0 0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.stat{border-radius:18px;padding:12px 14px;color:var(--on-color)}
+.stat b{display:block;font:800 30px/1 'Bricolage Grotesque',sans-serif}
+.stat small{font-weight:700}
+.s1{background:var(--violet);color:#fff}.s2{background:var(--yellow)}.s3{background:var(--pink);color:#fff}.s4{background:var(--teal)}
+form{background:var(--surface);border:2px solid var(--line);border-radius:22px;padding:16px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-bottom:18px}
+form .full{grid-column:1/-1}
+label{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:13px;color:var(--muted)}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:10px 12px;width:100%}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid var(--violet);outline-offset:1px}
+textarea{resize:vertical;min-height:44px}
+.btn{font:800 16px 'Bricolage Grotesque',sans-serif;border:0;border-radius:14px;padding:12px 20px;cursor:pointer;background:var(--orange);color:var(--on-color);transition:transform .12s}
+.btn:active{transform:scale(.96)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center}
+.chip{border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 14px;font-weight:700;cursor:pointer;font-family:inherit}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.spacer{flex:1}
+.board{display:grid;grid-template-columns:repeat(5,minmax(210px,1fr));gap:12px;overflow-x:auto;padding-bottom:8px}
+.col{border-radius:20px;padding:10px;min-height:140px}
+.col h2{font-size:18px;padding:4px 6px 10px;display:flex;justify-content:space-between;align-items:center}
+.col h2 em{font-style:normal;background:rgba(255,255,255,.55);border-radius:999px;padding:0 10px;font-size:14px}
+.c-ide{background:var(--yellow)}.c-produksi{background:var(--orange)}.c-editing{background:var(--pink)}.c-siap{background:var(--violet)}.c-selesai{background:var(--teal)}
+.c-ide,.c-produksi,.c-selesai,.c-editing,.c-siap{color:var(--on-color)}
+.c-editing h2,.c-siap h2{color:#fff}.c-editing h2 em,.c-siap h2 em{color:var(--on-color)}
+.card{background:var(--surface);color:var(--ink);border-radius:14px;padding:12px;margin-bottom:10px;box-shadow:0 3px 0 rgba(30,27,58,.18)}
+.card h3{font-size:16px;line-height:1.25;margin-bottom:6px}
+.card p{margin:6px 0;color:var(--muted);font-size:13px;overflow-wrap:anywhere}
+.tag{display:inline-block;border-radius:8px;padding:2px 8px;font-size:12px;font-weight:700;color:#1E1B3A}
+.due{display:inline-block;border-radius:8px;padding:2px 8px;font-size:12px;font-weight:700;margin-left:4px;background:var(--bg);color:var(--ink)}
+.due.late{background:var(--red);color:#fff}.due.today{background:var(--yellow);color:#1E1B3A}.due.done{background:var(--teal);color:#1E1B3A}
+.row{display:flex;gap:6px;margin-top:8px}
+.row select{padding:6px 8px;font-size:13px;border-radius:10px}
+.del{border:2px solid var(--line);background:transparent;color:var(--muted);border-radius:10px;padding:0 10px;cursor:pointer;font-weight:700}
+.del:hover{color:var(--red);border-color:var(--red)}
+.sow{margin-top:8px;border-radius:12px;background:var(--bg);padding:6px 10px}
+.sow summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--violet)}
+.sow textarea{margin:8px 0 4px;font-size:13px;min-height:90px}
+.empty{text-align:center;padding:14px 6px;font-size:13px;opacity:.8}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.pill{border-radius:999px;padding:6px 14px;font-weight:700;font-size:13px;background:var(--surface);border:2px solid var(--line)}
+.pill.ok{background:var(--teal);color:#1E1B3A;border-color:var(--teal)}
+.pill.warn{background:var(--yellow);color:#1E1B3A;border-color:var(--yellow)}
+.theme{border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:8px 12px;cursor:pointer;font-weight:700}
+@media(max-width:820px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  form{grid-template-columns:1fr 1fr}
+  form label:first-child{grid-column:1/-1}
+  .board{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.hide{display:none!important}
+.authbox{max-width:420px;margin:30px auto;background:var(--surface);border:2px solid var(--line);border-radius:22px;padding:22px}
+.authbox h2{font-size:30px;margin-bottom:14px}
+.authbox form{display:flex;flex-direction:column;gap:12px;border:0;padding:0;margin:0;background:transparent}
+.msg{margin:0;font-weight:700;color:var(--red);min-height:1.2em}
+.msg.info{color:var(--violet)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1><span class="a">Jadwal</span><span class="b">Konten</span></h1>
+      <p class="sub" id="today"></p>
+    </div>
+    <button class="theme" id="themeBtn" type="button">Ganti tema</button>
+  </header>
+
+  <div class="bar">
+    <span id="acct" class="pill">Memeriksa akun…</span>
+    <span id="sync" class="pill">Memuat…</span>
+    <button class="theme" id="logoutBtn" type="button" hidden>Keluar</button>
+    <span class="spacer"></span>
+    <button class="theme" id="expBtn" type="button">Ekspor ke spreadsheet (CSV)</button>
+    <button class="theme" id="impBtn" type="button">Impor dari spreadsheet</button>
+    <input id="impFile" type="file" accept=".csv,text/csv" hidden>
+  </div>
+
+  <section id="auth" class="authbox hide">
+    <h2 id="authTitle">Masuk</h2>
+    <form id="authForm">
+      <label id="nameLbl" class="hide">Nama<input id="aname" maxlength="60" autocomplete="name"></label>
+      <label>Email<input id="aemail" type="email" required autocomplete="email"></label>
+      <label id="codeLbl" class="hide">Kode dari email (6 angka)<input id="acode" inputmode="numeric" maxlength="6" autocomplete="one-time-code"></label>
+      <label id="passLbl"><span id="passText">Kata sandi (minimal 6 karakter)</span><input id="apass" type="password" required minlength="6" autocomplete="current-password"></label>
+      <button class="btn" type="submit" id="authBtn">Masuk</button>
+      <p id="authMsg" class="msg" role="alert"></p>
+      <button type="button" class="chip" id="forgotBtn">Lupa kata sandi?</button>
+      <button type="button" class="chip hide" id="haveCode">Saya sudah punya kode</button>
+      <button type="button" class="chip" id="authSwitch">Belum punya akun? Daftar</button>
+    </form>
+  </section>
+  <div id="app">
+  <div class="stats" id="stats"></div>
+
+  <form id="f">
+    <label>Judul konten<input id="title" required maxlength="80" placeholder="Contoh: Review kamera baru"></label>
+    <label>Platform
+      <select id="platform">
+        <option>TikTok</option><option>Instagram</option><option>YouTube</option><option>Reels</option><option>Shorts</option><option>Shopee</option><option>Threads</option><option>Blog</option><option>Lainnya</option>
+      </select>
+    </label>
+    <label>Tahap
+      <select id="stage">
+        <option value="ide">Ide</option><option value="produksi">Produksi</option><option value="editing">Editing</option><option value="siap">Siap upload</option><option value="selesai">Selesai</option>
+      </select>
+    </label>
+    <label>Deadline<input id="due" type="date" required></label>
+    <label class="full">SOW (Scope of Work)<textarea id="sow" maxlength="1000" rows="4" placeholder="Contoh:\n- 1 video 30 detik, format 9:16\n- 2x revisi\n- Tayang paling lambat H+1 setelah approval"></textarea></label>
+    <label class="full">Catatan (opsional)<textarea id="note" maxlength="200" placeholder="Brief, kolaborasi, link referensi..."></textarea></label>
+    <div class="full"><button class="btn" type="submit">Tambah ke jadwal</button></div>
+  </form>
+
+  <div class="tools" id="tools"></div>
+  <div class="board" id="board"></div>
+  </div>
+</div>
+
+<script>
+const STAGES=[["ide","Ide"],["produksi","Produksi"],["editing","Editing"],["siap","Siap upload"],["selesai","Selesai"]];
+const PCOL={TikTok:"#12C4AE",Instagram:"#FF4D8D",YouTube:"#FF7A3D",Reels:"#FFC82C",Shorts:"#C7B8FF",Shopee:"#FF6B4A",Threads:"#7DD3FC",Blog:"#9BE15D",Lainnya:"#D9D6EE"};
+const KEY="jadwal-konten-v1";
+let tasks=[],filter="semua";
+
+const iso=d=>{const x=new Date(d);x.setMinutes(x.getMinutes()-x.getTimezoneOffset());return x.toISOString().slice(0,10)};
+const addDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+
+function load(){
+  try{const r=localStorage.getItem(KEY);if(r){tasks=JSON.parse(r);return}}catch(e){}
+  tasks=[
+    {id:uid(),title:"Video unboxing paket endorse",platform:"YouTube",stage:"editing",due:addDays(1),note:"Tambahkan intro 5 detik",sow:"- 1 video 60 detik, format 16:9\n- Sebut 3 keunggulan produk\n- 2x revisi\n- Tayang setelah approval klien"},
+    {id:uid(),title:"Reels GRWM weekend",platform:"Reels",stage:"produksi",due:addDays(0),note:""},
+    {id:uid(),title:"Carousel tips caption",platform:"Instagram",stage:"ide",due:addDays(5),note:"Cari 5 contoh"},
+    {id:uid(),title:"TikTok tren audio baru",platform:"TikTok",stage:"siap",due:addDays(-1),note:"Jadwalkan jam 19.00"},
+    {id:uid(),title:"Review produk skincare",platform:"Blog",stage:"selesai",due:addDays(-3),note:""}
+  ];
+}
+// ====== PENGATURAN ======
+const API_URL="https://script.google.com/macros/s/AKfycbzKa_zkOq4KniDXYDuUALDSUG-kcN77of-PXUOg9-pbHbCAIzQfHP4kcrj3Y2qJ5ziQOQ/exec"; // URL Web App Google Apps Script (lihat PANDUAN.md)
+// ========================
+const $=id=>document.getElementById(id);
+let token=null,saveTimer=null,mode="login";
+try{token=localStorage.getItem(KEY+":token")}catch(e){}
+function setSync(t,c){$("sync").textContent=t;$("sync").className="pill "+(c||"")}
+async function api(body){
+  const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)});
+  return r.json();
+}
+function lockUI(locked){["app","expBtn","impBtn"].forEach(i=>$(i).classList.toggle("hide",locked))}
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(tasks))}catch(e){}
+  if(!API_URL||!token)return;
+  setSync("Menyimpan…","warn");clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{
+    try{
+      const r=await api({action:"save",token,tasks});
+      if(r.ok)setSync("Tersimpan di spreadsheet ✓","ok");
+      else if(r.expired)logout(true);
+      else setSync(r.error||"Gagal menyimpan","warn");
+    }catch(e){setSync("Gagal menyimpan, data masih di browser ini","warn")}
+  },800);
+}
+function enter(r){
+  token=r.token;try{localStorage.setItem(KEY+":token",token)}catch(e){}
+  tasks=r.tasks||[];try{localStorage.setItem(KEY,JSON.stringify(tasks))}catch(e){}
+  $("acct").textContent="Masuk sebagai "+(r.name||r.email);$("acct").className="pill ok";
+  $("auth").classList.add("hide");lockUI(false);$("logoutBtn").hidden=false;
+  setSync("Tersinkron dengan spreadsheet ✓","ok");render();
+}
+function showAuth(msg){
+  lockUI(true);$("auth").classList.remove("hide");$("logoutBtn").hidden=true;
+  $("acct").textContent="Belum masuk";$("acct").className="pill warn";setSync("","");$("authMsg").textContent=msg||"";
+}
+function logout(expired){
+  const t=token;token=null;tasks=[];
+  try{localStorage.removeItem(KEY);localStorage.removeItem(KEY+":token")}catch(e){}
+  if(t&&!expired)api({action:"logout",token:t}).catch(()=>{});
+  render();showAuth(expired?"Sesi berakhir, silakan masuk lagi.":"");
+}
+function setMode(m){
+  mode=m;
+  const T={login:["Masuk","Masuk"],register:["Buat akun","Daftar"],forgot:["Lupa kata sandi","Kirim kode ke email"],reset:["Atur kata sandi baru","Ubah kata sandi"]}[m];
+  $("authTitle").textContent=T[0];$("authBtn").textContent=T[1];
+  $("nameLbl").classList.toggle("hide",m!=="register");
+  $("passLbl").classList.toggle("hide",m==="forgot");$("apass").required=m!=="forgot";
+  $("codeLbl").classList.toggle("hide",m!=="reset");$("acode").required=m==="reset";
+  $("passText").textContent=m==="reset"?"Kata sandi baru (minimal 6 karakter)":"Kata sandi (minimal 6 karakter)";
+  $("forgotBtn").classList.toggle("hide",m!=="login");
+  $("haveCode").classList.toggle("hide",m!=="forgot");
+  $("authSwitch").textContent=m==="login"?"Belum punya akun? Daftar":m==="register"?"Sudah punya akun? Masuk":"Kembali ke halaman masuk";
+  $("apass").autocomplete=(m==="register"||m==="reset")?"new-password":"current-password";
+  $("authMsg").textContent="";$("authMsg").className="msg";
+}
+async function initCloud(){
+  if(!API_URL){$("acct").textContent="Mode lokal: data hanya di browser ini";$("acct").className="pill warn";setSync("API_URL belum diisi","");$("logoutBtn").hidden=true;return}
+  lockUI(true);
+  if(token){try{const r=await api({action:"load",token});if(r.ok){enter(r);return}}catch(e){}}
+  showAuth("");
+}
+$("authSwitch").addEventListener("click",()=>setMode(mode==="login"?"register":"login"));
+$("forgotBtn").addEventListener("click",()=>setMode("forgot"));
+$("haveCode").addEventListener("click",()=>setMode("reset"));
+$("logoutBtn").addEventListener("click",()=>logout(false));
+$("authForm").addEventListener("submit",async e=>{
+  e.preventDefault();$("authBtn").disabled=true;$("authMsg").textContent="";$("authMsg").className="msg";
+  try{
+    const r=await api({action:mode,email:$("aemail").value.trim(),name:$("aname").value.trim(),password:$("apass").value,code:$("acode").value.trim()});
+    if(mode==="forgot"&&r.ok){setMode("reset");$("authMsg").className="msg info";$("authMsg").textContent=r.message}
+    else if(r.ok){$("apass").value="";$("acode").value="";enter(r)}
+    else $("authMsg").textContent=r.error||"Gagal, coba lagi.";
+  }catch(err){$("authMsg").textContent="Tidak bisa terhubung ke server. Cek API_URL dan koneksi."}
+  $("authBtn").disabled=false;
+});
+function parseCSV(s){
+  const rows=[];let r=[],c="",q=false;s=s.replace(/^\uFEFF/,"");
+  for(let i=0;i<s.length;i++){const ch=s[i];
+    if(q){if(ch==='"'){if(s[i+1]==='"'){c+='"';i++}else q=false}else c+=ch}
+    else if(ch==='"')q=true;
+    else if(ch===','){r.push(c);c=""}
+    else if(ch==='\n'){r.push(c);rows.push(r);r=[];c=""}
+    else if(ch!=='\r')c+=ch}
+  if(c||r.length){r.push(c);rows.push(r)}
+  return rows;
+}
+function exportCSV(){
+  const lab=Object.fromEntries(STAGES);
+  const q=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
+  const head=["Judul","Platform","Tahap","Deadline","Catatan","SOW"];
+  const rows=[head.map(q).join(",")].concat(tasks.map(t=>[t.title,t.platform,lab[t.stage]||t.stage,t.due,t.note||"",t.sow||""].map(q).join(",")));
+  const b=new Blob(["\uFEFF"+rows.join("\r\n")],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="jadwal-konten.csv";
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function importCSV(text){
+  const rows=parseCSV(text);const head=rows.shift()||[];
+  const ix=n=>head.findIndex(h=>h.trim().toLowerCase()===n);
+  const st={};STAGES.forEach(([k,l])=>{st[k]=k;st[l.toLowerCase()]=k});
+  const get=(c,n)=>(c[ix(n)]||"").trim();
+  let n=0;
+  rows.forEach(c=>{
+    const title=get(c,"judul");if(!title)return;
+    const due=get(c,"deadline");
+    tasks.push({id:uid(),title,platform:get(c,"platform")||"Lainnya",stage:st[get(c,"tahap").toLowerCase()]||"ide",due:/^\d{4}-\d{2}-\d{2}$/.test(due)?due:addDays(3),note:get(c,"catatan"),sow:get(c,"sow")});
+    n++;
+  });
+  save();render();setSync(n+" konten diimpor ✓","ok");
+}
+
+function dueInfo(t){
+  if(t.stage==="selesai")return["Selesai","done"];
+  const diff=Math.round((new Date(t.due+"T00:00:00")-new Date(iso(new Date())+"T00:00:00"))/864e5);
+  if(diff<0)return["Terlambat "+(-diff)+" hari","late"];
+  if(diff===0)return["Hari ini","today"];
+  if(diff===1)return["Besok",""];
+  return[diff+" hari lagi",""];
+}
+function fmt(d){return new Date(d+"T00:00:00").toLocaleDateString("id-ID",{day:"numeric",month:"short"})}
+
+function render(){
+  const open=tasks.filter(t=>t.stage!=="selesai");
+  const today=open.filter(t=>dueInfo(t)[1]==="today").length;
+  const late=open.filter(t=>dueInfo(t)[1]==="late").length;
+  document.getElementById("stats").innerHTML=
+    `<div class="stat s1"><b>${open.length}</b><small>Sedang dikerjakan</small></div>
+     <div class="stat s2"><b>${today}</b><small>Deadline hari ini</small></div>
+     <div class="stat s3"><b>${late}</b><small>Terlambat</small></div>
+     <div class="stat s4"><b>${tasks.length-open.length}</b><small>Selesai</small></div>`;
+
+  const plats=["semua",...Object.keys(PCOL)];
+  document.getElementById("tools").innerHTML=plats.map(p=>`<button type="button" class="chip" data-f="${p}" aria-pressed="${filter===p}">${p==="semua"?"Semua platform":p}</button>`).join("");
+
+  document.getElementById("board").innerHTML=STAGES.map(([k,label])=>{
+    const items=tasks.filter(t=>t.stage===k&&(filter==="semua"||t.platform===filter)).sort((a,b)=>a.due.localeCompare(b.due));
+    const cards=items.map(t=>{
+      const [txt,cls]=dueInfo(t);
+      return `<article class="card">
+        <h3>${esc(t.title)}</h3>
+        <span class="tag" style="background:${PCOL[t.platform]||PCOL.Lainnya}">${esc(t.platform)}</span>
+        <span class="due ${cls}">${txt}</span>
+        <p>Deadline ${fmt(t.due)}${t.note?" · "+esc(t.note):""}</p>
+        <details class="sow"><summary>Scope of Work${t.sow?" ✓":""}</summary><textarea data-sow="${t.id}" rows="5" aria-label="Scope of Work" placeholder="Tulis SOW: deliverables, jumlah revisi, format, brief klien...">${esc(t.sow||"")}</textarea></details>
+        <div class="row">
+          <select data-id="${t.id}" aria-label="Ubah tahap">${STAGES.map(([v,l])=>`<option value="${v}"${v===t.stage?" selected":""}>${l}</option>`).join("")}</select>
+          <button class="del" data-del="${t.id}" aria-label="Hapus ${esc(t.title)}" type="button">Hapus</button>
+        </div>
+      </article>`}).join("");
+    return `<section class="col c-${k}"><h2>${label}<em>${items.length}</em></h2>${cards||'<div class="empty">Belum ada konten</div>'}</section>`;
+  }).join("");
+}
+
+document.getElementById("f").addEventListener("submit",e=>{
+  e.preventDefault();
+  const g=id=>document.getElementById(id);
+  tasks.push({id:uid(),title:g("title").value.trim(),platform:g("platform").value,stage:g("stage").value,due:g("due").value,note:g("note").value.trim(),sow:g("sow").value.trim()});
+  save();e.target.reset();g("due").value=addDays(3);render();
+});
+document.getElementById("board").addEventListener("change",e=>{
+  if(e.target.dataset.sow){const s=tasks.find(x=>x.id===e.target.dataset.sow);if(s){s.sow=e.target.value.trim();save()}return}
+  const id=e.target.dataset.id;if(!id)return;
+  const t=tasks.find(x=>x.id===id);if(t){t.stage=e.target.value;save();render()}
+});
+document.getElementById("board").addEventListener("click",e=>{
+  const id=e.target.dataset.del;if(!id)return;
+  tasks=tasks.filter(x=>x.id!==id);save();render();
+});
+document.getElementById("tools").addEventListener("click",e=>{
+  if(e.target.dataset.f){filter=e.target.dataset.f;render()}
+});
+document.getElementById("themeBtn").addEventListener("click",()=>{
+  const r=document.documentElement;
+  const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;
+  r.dataset.theme=dark?"light":"dark";
+});
+
+document.getElementById("today").textContent=new Date().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"})+" — yuk selesaikan kontennya!";
+document.getElementById("due").value=addDays(3);
+document.getElementById("expBtn").addEventListener("click",exportCSV);
+document.getElementById("impBtn").addEventListener("click",()=>document.getElementById("impFile").click());
+document.getElementById("impFile").addEventListener("change",e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=()=>importCSV(String(r.result));r.readAsText(f);e.target.value="";
+});
+load();render();initCloud();
+</script>
+</body>
+</html>
